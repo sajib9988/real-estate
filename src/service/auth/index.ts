@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 import { cookies } from 'next/headers';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; // Fixed import
 import { DecodedUser } from '@/lib/type';
-
+import { FieldValues } from 'react-hook-form';
 
 export const getCurrentUser = async (): Promise<DecodedUser | null> => {
-  const accessToken = cookies().get('accessToken')?.value;
+  const accessToken = (await cookies()).get('accessToken')?.value;
   if (!accessToken) return null;
   try {
     const decoded = jwtDecode<DecodedUser>(accessToken);
@@ -15,8 +16,6 @@ export const getCurrentUser = async (): Promise<DecodedUser | null> => {
     return null;
   }
 };
-import { FieldValues } from 'react-hook-form';
-import { cookies } from 'next/headers';
 
 export const registerUser = async (userData: FieldValues) => {
   try {
@@ -41,7 +40,7 @@ export const loginUser = async (userData: FieldValues) => {
     const result = await res.json();
 
     if (result.access && result.refresh) {
-      const cookieStore = cookies();
+      const cookieStore = await cookies();
       cookieStore.set('accessToken', result.access, {
         httpOnly: true,
         secure: true,

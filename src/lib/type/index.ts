@@ -5,3 +5,11 @@ export interface DecodedUser {
   exp: number;
   iat: number;
 }
+
+export interface TUser {
+  user_id: number;
+  email: string;
+  role: 'buyer' | 'seller' | 'admin' | 'superadmin';
+  exp: number;
+  iat: number;
+}

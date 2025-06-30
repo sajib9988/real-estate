@@ -9,7 +9,8 @@ import {
   SetStateAction,
 } from 'react';
 import { getCurrentUser } from '@/service/auth';
-import { TUser } from '@/type';
+import { TUser } from '@/lib/type';
+
 
 interface IUserProv {
   user: TUser | null;

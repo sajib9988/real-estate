@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
@@ -35,7 +36,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>
 
-export default function RealEstateForm() {
+export function RealEstateForm() {
   const [images, setImages] = useState<File[]>([])
 
   const form = useForm<FormValues>({
@@ -55,7 +56,8 @@ export default function RealEstateForm() {
 
   const onSubmit = async (data: FormValues) => {
     const formData = new FormData()
-    const data ={
+    // Fixed: Remove duplicate variable declaration
+    const propertyData = {
       title: data.title,
       description: data.description,
       price: data.price,
@@ -66,7 +68,7 @@ export default function RealEstateForm() {
       property_type: data.property_type,
       is_published: data.is_published
     }
-    formData.append('propertyData', JSON.stringify(data))
+    formData.append('propertyData', JSON.stringify(propertyData))
     images.forEach((file) => {
       formData.append('images', file)
     })
