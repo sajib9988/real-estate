@@ -72,6 +72,7 @@ const menuByRole: Record<UserRole, SidebarMenuItemType[]> = {
     { title: "My Inquiries", url: "/buyer/inquiries" },
     { title: "Add Inquiry", url: "/buyer/inquiries/add" },
     { title: "Schedule Visit", url: "/buyer/visit" },
+    
     { title: "Profile", url: "/buyer/profile" },
   ],
 }
