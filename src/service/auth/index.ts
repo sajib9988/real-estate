@@ -24,7 +24,8 @@ export const registerUser = async (userData: FieldValues) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),
     });
-    return await res.json();
+    const data = await res.json();
+    return { ok: res.ok, data };
   } catch (error: any) {
     return { success: false, message: error.message };
   }
@@ -54,8 +55,13 @@ export const loginUser = async (userData: FieldValues) => {
         path: '/',
       });
     }
-    return result;
+    return { ok: res.ok, data: result };
   } catch (error: any) {
     return { success: false, message: error.message };
   }
+};
+
+
+export const logout = async () => {
+  (await cookies()).delete("accessToken");
 };

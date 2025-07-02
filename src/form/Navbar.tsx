@@ -1,13 +1,18 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Menu, X, Home, MapPin, Phone, User, Building, Key, DollarSign } from 'lucide-react';
+import { Search, Menu, X, Home,  Phone, User, Building, Key, DollarSign, LayoutDashboard, LogOut } from 'lucide-react';
 import Link from 'next/link';
+import { useUser } from '@/context/UserContext'; // Assuming you have a UserContext
+import { logout } from '@/service/auth';
 
 export default function RealEstateNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [placeholderIndex, setPlaceholderIndex] = useState<number>(0);
+  
+  // Get user data from context
+  const { user} = useUser(); // Assuming you have user and logout function
 
   const placeholderTexts: string[] = [
     "Search luxury apartments...",
@@ -30,10 +35,25 @@ export default function RealEstateNavbar() {
     { name: 'Properties', href: '/properties', icon: Building },
     { name: 'Buy', href: '/buy', icon: Key },
     { name: 'Rent', href: '/rent', icon: DollarSign },
-
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact', icon: Phone },
   ];
+
+  // Get dashboard URL based on user role
+  const getDashboardUrl = (role: string) => {
+    switch (role) {
+      case 'superadmin':
+        return '/dashboard/superAdmin';
+      case 'admin':
+        return '/dashboard/admin';
+      case 'seller':
+        return '/dashboard/seller';
+      case 'buyer':
+        return '/dashboard/buyer';
+      default:
+        return '/dashboard';
+    }
+  };
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -47,6 +67,11 @@ export default function RealEstateNavbar() {
       console.log('Searching for:', searchQuery);
       // Add your search logic here
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsMenuOpen(false);
   };
 
   return (
@@ -120,7 +145,7 @@ export default function RealEstateNavbar() {
               {menuItems.map((item, index) => {
                 const Icon = item.icon;
                 return (
-                  <a
+                  <Link
                     key={item.name}
                     href={item.href}
                     className="flex items-center space-x-1 px-3 py-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 font-medium group"
@@ -132,13 +157,58 @@ export default function RealEstateNavbar() {
                       <Icon className="h-4 w-4 group-hover:animate-pulse transition-all duration-200 group-hover:scale-110" />
                     )}
                     <span className="group-hover:translate-x-1 transition-transform duration-200">{item.name}</span>
-                  </a>
+                  </Link>
                 );
               })}
-              <button className="ml-4 flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-200 group">
-                <User className="h-4 w-4 group-hover:animate-spin" />
-                <span>Login</span>
-              </button>
+              
+              {/* Conditional rendering based on user authentication */}
+              {user ? (
+                <div className="flex items-center space-x-2 ml-4">
+                  {/* Dashboard Button */}
+                  <Link
+                    href={getDashboardUrl(user.role)}
+                    className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-200 group"
+                  >
+                    <LayoutDashboard className="h-4 w-4 group-hover:animate-pulse" />
+                    <span className="capitalize">{user.role} Dashboard</span>
+                  </Link>
+                  
+                  {/* User Profile/Logout */}
+                  <div className="relative group">
+                    <button className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg transition-all duration-200">
+                      <User className="h-4 w-4" />
+                      <span className="hidden sm:block">{user.first_name || user.email}</span>
+                    </button>
+                    
+                    {/* Dropdown Menu */}
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                      <div className="py-2">
+                        <Link
+                          href="/profile"
+                          className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                        >
+                          Profile
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors duration-200 flex items-center space-x-2"
+                        >
+                          <LogOut className="h-4 w-4" />
+                          <span>Logout</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="ml-4 flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-200 group"
+                >
+                  <User className="h-4 w-4 group-hover:animate-spin" />
+                  <span>Login</span>
+                </Link>
+              )}
             </div>
 
             {/* Mobile menu button */}
@@ -185,7 +255,7 @@ export default function RealEstateNavbar() {
               {menuItems.map((item, index) => {
                 const Icon = item.icon;
                 return (
-                  <a
+                  <Link
                     key={item.name}
                     href={item.href}
                     className="flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 group"
@@ -199,44 +269,62 @@ export default function RealEstateNavbar() {
                       <Icon className="h-5 w-5 group-hover:animate-pulse group-hover:scale-110 transition-all duration-200" />
                     )}
                     <span className="font-medium group-hover:translate-x-1 transition-transform duration-200">{item.name}</span>
-                  </a>
+                  </Link>
                 );
               })}
-              <button className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 rounded-lg mt-4 hover:shadow-lg transition-all duration-200 group">
-                <User className="h-5 w-5 group-hover:animate-spin" />
-                <span>Login</span>
-              </button>
+              
+              {/* Mobile Auth Section */}
+              {user ? (
+                <>
+                  {/* Dashboard Button for Mobile */}
+                  <Link
+                    href={getDashboardUrl(user.role)}
+                    className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-green-600 to-blue-600 text-white px-4 py-3 rounded-lg mt-4 hover:shadow-lg transition-all duration-200 group"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <LayoutDashboard className="h-5 w-5 group-hover:animate-pulse" />
+                    <span className="capitalize">{user.role} Dashboard</span>
+                  </Link>
+                  
+                  {/* User Info */}
+                  <div className="border-t border-gray-200 mt-4 pt-4">
+                    <div className="flex items-center space-x-3 px-3 py-2 text-gray-700">
+                      <User className="h-5 w-5" />
+                      <span className="font-medium">{user.first_name || user.email}</span>
+                    </div>
+                    <Link
+                      href="/profile"
+                      className="flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <User className="h-5 w-5" />
+                      <span className="font-medium">Profile</span>
+                    </Link>
+                    <button
+                     onClick={handleLogout}
+                      className="w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-200"
+                    >
+                      <LogOut className="h-5 w-5" />
+                      <span className="font-medium">Logout</span>
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <Link
+                  href="/login"
+                  className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 rounded-lg mt-4 hover:shadow-lg transition-all duration-200 group"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <User className="h-5 w-5 group-hover:animate-spin" />
+                  <span>Login</span>
+                </Link>
+              )}
             </div>
           </div>
         )}
       </nav>
 
-      {/* Demo Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Find Your Dream Home
-          </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            Discover the perfect property with our advanced search features
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
-                <div className="h-48 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg mb-4 flex items-center justify-center">
-                  <MapPin className="h-12 w-12 text-blue-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Premium Property {i}
-                </h3>
-                <p className="text-gray-600">
-                  Beautiful home in prime location with modern amenities and stunning views.
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+  
     </div>
   );
 }
