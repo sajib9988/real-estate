@@ -19,7 +19,7 @@ export const getCurrentUser = async (): Promise<DecodedUser | null> => {
 
 export const registerUser = async (userData: FieldValues) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/user/register`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/accounts/users/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),

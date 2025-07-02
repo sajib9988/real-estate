@@ -1,4 +1,4 @@
-import { RealEstateForm } from "@/components/RealEstateForm";
+import { RealEstateForm } from "@/form/RealEstateForm";
 import { Toaster } from "@/components/ui/toaster";
 
 export default function Home() {

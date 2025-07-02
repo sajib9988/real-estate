@@ -1,24 +1,26 @@
-"use client";
+'use client';
+
+
+import { TUser } from '@/lib/type';
+import { getCurrentUser } from '@/service/auth';
+
+
 
 import {
   createContext,
-  useContext,
-  useState,
-  useEffect,
   Dispatch,
   SetStateAction,
+  useContext,
+  useEffect,
+  useState,
 } from 'react';
-import { getCurrentUser } from '@/service/auth';
-import { TUser } from '@/lib/type';
-
 
 interface IUserProv {
   user: TUser | null;
-  setUser: (user: TUser | null) => void;
   isLoading: boolean;
+  setUser: (user: TUser | null) => void;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
-
 export const UserContext = createContext<IUserProv | undefined>(undefined);
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
@@ -26,15 +28,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const handleUser = async () => {
-    try {
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
-    } catch (error) {
-      console.error("Failed to fetch current user:", error);
-      setUser(null); // Ensure user is null on error
-    } finally {
-      setIsLoading(false);
-    }
+    const user = await getCurrentUser();
+    setUser(user);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -50,10 +46,11 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useUser = () => {
   const context = useContext(UserContext);
-  if (context === undefined) {
+
+  if (context == undefined) {
     throw new Error('useUser must be used within the UserProvider context');
   }
+
   return context;
 };
-
 export default UserProvider;
