@@ -21,6 +21,8 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Particles from '@/components/ui/particles'
 
+import { jwtDecode } from 'jwt-decode';
+
 // ✅ Form validation schema for login
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -54,7 +56,11 @@ export function LoginForm() {
       if (response.ok) {
         toast.success("Login successful!");
         form.reset();
-        router.push('/');
+
+    router.push('/'); // Redirect to the dashboard or home page
+
+        // Redirect based on role
+       
       } else {
         toast.error(`Login failed: ${response.data.message || 'Unknown error'}`);
       }
