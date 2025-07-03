@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { usePathname } from "next/navigation"
-import { ChevronRight } from "lucide-react"
+import * as React from "react";
+import { usePathname } from "next/navigation";
+import { ChevronRight } from "lucide-react";
 
 import {
   Sidebar,
@@ -15,24 +15,24 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from "@/components/ui/collapsible";
 
-type UserRole = "superadmin" | "admin" | "seller" | "buyer"
+type UserRole = "superadmin" | "admin" | "seller" | "buyer";
 
 interface SidebarMenuItemType {
-  title: string
-  url?: string
-  children?: SidebarMenuItemType[]
+  title: string;
+  url?: string;
+  children?: SidebarMenuItemType[];
 }
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  userRole: UserRole
+  userRole: UserRole;
 }
 
 const menuByRole: Record<UserRole, SidebarMenuItemType[]> = {
@@ -63,7 +63,7 @@ const menuByRole: Record<UserRole, SidebarMenuItemType[]> = {
     { title: "Dashboard", url: "/seller/dashboard" },
     { title: "My Properties", url: "/seller/properties" },
     { title: "Add Property", url: "/seller/properties/add" },
-    { title: "Edit Property", url: "/seller/properties/:id/edit" },
+    // ❌ Removed "Edit Property" from static menu
     { title: "Buyer Messages", url: "/seller/messages" },
   ],
   buyer: [
@@ -72,14 +72,13 @@ const menuByRole: Record<UserRole, SidebarMenuItemType[]> = {
     { title: "My Inquiries", url: "/buyer/inquiries" },
     { title: "Add Inquiry", url: "/buyer/inquiries/add" },
     { title: "Schedule Visit", url: "/buyer/visit" },
-    
     { title: "Profile", url: "/buyer/profile" },
   ],
-}
+};
 
 export function AppSidebar({ userRole, ...props }: AppSidebarProps) {
-  const pathname = usePathname()
-  const menus = menuByRole[userRole]
+  const pathname = usePathname();
+  const menus = menuByRole[userRole];
 
   return (
     <Sidebar {...props}>
@@ -106,7 +105,7 @@ export function AppSidebar({ userRole, ...props }: AppSidebarProps) {
                         <SidebarMenuItem key={child.title}>
                           <SidebarMenuButton
                             asChild
-                            isActive={pathname === child.url}
+                            isActive={pathname.startsWith(child.url ?? "")}
                           >
                             <a href={child.url}>{child.title}</a>
                           </SidebarMenuButton>
@@ -123,7 +122,7 @@ export function AppSidebar({ userRole, ...props }: AppSidebarProps) {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    isActive={pathname === item.url}
+                    isActive={pathname.startsWith(item.url ?? "")}
                   >
                     <a href={item.url}>{item.title}</a>
                   </SidebarMenuButton>
@@ -135,5 +134,5 @@ export function AppSidebar({ userRole, ...props }: AppSidebarProps) {
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

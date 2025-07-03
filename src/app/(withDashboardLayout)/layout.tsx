@@ -1,5 +1,12 @@
+'use client';
 
+import { ReactNode } from 'react';
 import { AppSidebar } from "@/components/app-sidebar";
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,26 +15,22 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { getProfile } from "@/services/Profile";
+import { useUser } from '@/context/UserContext';
 
-export default async function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const { data: profile } = await getProfile();
-  const userRole = profile?.role || 'user'; // Default to 'user' if role not available
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+  const { user, isLoading } = useUser();
+
+  if (isLoading) {
+    return <div className="p-4">Loading...</div>;
+  }
+
+  const userRole = user?.role || 'buyer';
 
   return (
     <SidebarProvider>
       <AppSidebar userRole={userRole} />
+
       <SidebarInset>
-        {/* Header with breadcrumb navigation */}
         <header className="sticky top-0 z-10 bg-background flex h-16 items-center justify-between px-4 border-b">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1" />
@@ -38,17 +41,14 @@ export default async function DashboardLayout({
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>{userRole === 'admin' ? 'Admin' : 'User'} Dashboard</BreadcrumbPage>
+                  <BreadcrumbPage>{userRole} Dashboard</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          
-          {/* Add user profile/notification components here if needed */}
         </header>
 
-        {/* Main content area */}
-        <main className={`p-4 relative  pt-6 min-h-[calc(100vh-4rem)] gradientBg`}>
+        <main className="p-4 pt-6 relative min-h-[calc(100vh-4rem)] gradientBg">
           {children}
         </main>
       </SidebarInset>
