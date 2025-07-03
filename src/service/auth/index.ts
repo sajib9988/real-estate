@@ -10,11 +10,13 @@ export const getCurrentUser = async (): Promise<DecodedUser | null> => {
   if (!accessToken) return null;
   try {
     const decoded = jwtDecode<DecodedUser>(accessToken);
+    console.log('Decoded user:', decoded);
     return decoded;
   } catch (error) {
     console.error('JWT Decode error:', error);
     return null;
   }
+  
 };
 
 export const registerUser = async (userData: FieldValues) => {

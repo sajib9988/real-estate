@@ -16,12 +16,12 @@ import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react' // Import Eye and EyeOff icons
 import { loginUser } from '@/service/auth'
+import { useUser } from '@/context/UserContext' // Added useUser import
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Particles from '@/components/ui/particles'
 
-import { jwtDecode } from 'jwt-decode';
 
 // ✅ Form validation schema for login
 const formSchema = z.object({
@@ -34,6 +34,7 @@ type FormValues = z.infer<typeof formSchema>
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false) // State for password visibility
   const router = useRouter() // Import useRouter from 'next/router' if needed
+
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -56,10 +57,10 @@ export function LoginForm() {
       if (response.ok) {
         toast.success("Login successful!");
         form.reset();
+        
+        router.push('/'); // Redirect to the dashboard or home page
 
-    router.push('/'); // Redirect to the dashboard or home page
 
-        // Redirect based on role
        
       } else {
         toast.error(`Login failed: ${response.data.message || 'Unknown error'}`);

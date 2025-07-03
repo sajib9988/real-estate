@@ -25,6 +25,8 @@ export default function Navbar() {
 
   const { user, isLoading, setUser } = useUser();
 
+  console.log('User:', user);
+
   const placeholderTexts = [
     "Search luxury apartments...",
     "Find your dream home...",

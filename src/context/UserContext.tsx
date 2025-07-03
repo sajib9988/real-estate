@@ -30,6 +30,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const handleUser = async () => {
     const user = await getCurrentUser();
     setUser(user);
+    console.log('User from context:', user);
     setIsLoading(false);
   };
 
