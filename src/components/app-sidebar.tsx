@@ -89,7 +89,7 @@ export function AppSidebar({ userRole, ...props }: AppSidebarProps) {
         </h2>
       </SidebarHeader>
       <SidebarContent className="gap-0">
-        {menus.map((item) =>
+        {menus?.map((item) =>
           item.children ? (
             <Collapsible key={item.title} defaultOpen>
               <SidebarGroup>

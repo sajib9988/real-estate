@@ -1,3 +1,4 @@
+'use client';
 
 import { AppSidebar } from "@/components/app-sidebar"
 import {
@@ -14,20 +15,17 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-'use client';
+import { useUser } from "@/context/UserContext";
 
-import { UserRole } from '@/lib/type';
-import { useUser } from '@/context/UserContext';
-import { redirect } from 'next/navigation';
-import { useEffect } from 'react';
 
+type UserRole = 'admin' | 'superadmin' | 'buyer' | 'seller' 
 const Page = () => {
   const { user } = useUser()
+  
   return (
     <SidebarProvider>
       <AppSidebar userRole={user?.role as UserRole} />
       <SidebarInset>
-
         <header className="bg-background sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
@@ -57,3 +55,5 @@ const Page = () => {
     </SidebarProvider>
   )
 }
+
+export default Page

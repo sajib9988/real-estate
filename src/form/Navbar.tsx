@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Menu, X, Home,  Phone, User, Building, Key, DollarSign, LayoutDashboard, LogOut } from 'lucide-react';
+import { Search, Menu, X, Home, Phone, User, Building, Key, DollarSign, LayoutDashboard, LogOut } from 'lucide-react';
 import Link from 'next/link';
-import { useUser } from '@/context/UserContext'; // Assuming you have a UserContext
+import { useUser } from '@/context/UserContext';
 import { logout } from '@/service/auth';
 
 export default function RealEstateNavbar() {
@@ -12,7 +12,7 @@ export default function RealEstateNavbar() {
   const [placeholderIndex, setPlaceholderIndex] = useState<number>(0);
   
   // Get user data from context
-  const { user} = useUser(); // Assuming you have user and logout function
+  const { user, isLoading, setUser } = useUser();
 
   const placeholderTexts: string[] = [
     "Search luxury apartments...",
@@ -69,13 +69,47 @@ export default function RealEstateNavbar() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    setIsMenuOpen(false);
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setUser(null); // Clear user state immediately
+      setIsMenuOpen(false);
+      // Optionally redirect to home page
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
+  // Show loading state while user data is being fetched
+  if (isLoading) {
+    return (
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-100">
+        <nav className="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-white/20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex-shrink-0">
+                <Link href="/" className="flex items-center space-x-2 group">
+                  <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
+                    <Home className="h-6 w-6 text-white animate-pulse" />
+                  </div>
+                  <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    RealEstate Pro
+                  </span>
+                </Link>
+              </div>
+              <div className="animate-pulse">
+                <div className="h-8 bg-gray-200 rounded w-20"></div>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    );
+  }
+
   return (
-    <div className=" bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-100">
       <style jsx>{`
         @keyframes slideIn {
           from {
@@ -301,7 +335,7 @@ export default function RealEstateNavbar() {
                       <span className="font-medium">Profile</span>
                     </Link>
                     <button
-                     onClick={handleLogout}
+                      onClick={handleLogout}
                       className="w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-200"
                     >
                       <LogOut className="h-5 w-5" />
@@ -323,8 +357,6 @@ export default function RealEstateNavbar() {
           </div>
         )}
       </nav>
-
-  
     </div>
   );
 }
