@@ -14,11 +14,14 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { useUser } from "@/context/UserContext"
+'use client';
 
-export default function Page() {
+import { UserRole } from '@/lib/type';
+import { useUser } from '@/context/UserContext';
+import { redirect } from 'next/navigation';
+import { useEffect } from 'react';
 
-  type UserRole = "superadmin" | "admin" | "seller" | "buyer"
+const Page = () => {
   const { user } = useUser()
   return (
     <SidebarProvider>
