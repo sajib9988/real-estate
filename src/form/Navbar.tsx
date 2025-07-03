@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useUser } from '@/context/UserContext';
 import { logout } from '@/service/auth';
 
-export default function RealEstateNavbar() {
+export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [placeholderIndex, setPlaceholderIndex] = useState<number>(0);

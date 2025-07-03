@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "../form/Navbar";
+
 import UserProvider from "../context/UserContext";
 import { Toaster } from "sonner";
 const geistSans = Geist({
@@ -31,7 +31,7 @@ export default function RootLayout({
       >
           <Toaster richColors position="top-center" />
         <UserProvider>
-          <Navbar />
+    
           {children}
         </UserProvider>
       </body>
